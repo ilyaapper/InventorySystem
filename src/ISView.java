@@ -14,9 +14,15 @@ public class ISView extends JFrame {
     JMenuBar bar;
     JMenu fileMenu, itemMenu, viewMenu, helpMenu;
     JMenuItem openMI, saveMI, saveAsMI, addMI, deleteMI, userManualMI, faqMI;
-    JPanel pathPanel, searchPanel, treePanel;
+    JPanel pathPanel, searchPanel, treePanel, mainPanel, containerPanel, itemPanel, statsPanel, valuePanel, notePanel;
     JTextField searchBar;
     JScrollPane pathPanelScroller;
+    JTree tree;
+    JLabel containerName, itemName, itemQuantity, itemPrice;
+    JList<Item> itemList;
+    DefaultListModel<Item> itemModel;
+    JTextArea itemNotes;
+    JSpinner quantitySpinner, priceSpinner;
 
     public ISView(ActionListener listener) {
 
@@ -30,7 +36,6 @@ public class ISView extends JFrame {
 
         // Menu bar
         bar = new JMenuBar();
-
         bar.add(fileMenu = new JMenu("File"));
         bar.add(itemMenu = new JMenu("Item"));
         bar.add(viewMenu = new JMenu("View"));
@@ -45,7 +50,6 @@ public class ISView extends JFrame {
 
         helpMenu.add(userManualMI = new JMenuItem("User manual"));
         helpMenu.add(faqMI = new JMenuItem("FAQ"));
-
         this.setJMenuBar(bar);
 
         // Path panel
@@ -56,25 +60,68 @@ public class ISView extends JFrame {
 
         searchPanel = new JPanel();
         searchPanel.setPreferredSize(new Dimension(200, 20));
-        searchPanel.setBackground(new Color(230, 230, 230));
-        searchPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         searchPanel.setLayout(new BorderLayout());
         pathPanel.add(searchPanel, BorderLayout.NORTH);
 
         treePanel = new JPanel();
         treePanel.setPreferredSize(new Dimension(200, 480));
-        treePanel.setBackground(new Color(212, 212, 212));
+        treePanel.setLayout(new BorderLayout());
         pathPanel.add(treePanel, BorderLayout.CENTER);
 
         searchBar = new JTextField();
         searchBar.setPreferredSize(new Dimension(200, 20));
         searchPanel.add(searchBar, BorderLayout.NORTH);
 
+        treePanel.add(tree = new JTree());
+        pathPanelScroller = new JScrollPane(tree);
+        pathPanelScroller.setPreferredSize(new Dimension(200, 700));
+        treePanel.add(pathPanelScroller, BorderLayout.NORTH);
 
-        //pathPanelScroller = new JScrollPane(pathPanel);
-        //pathPanelScroller.add(new JScrollBar());
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new GridLayout(2, 1));
+        this.add(mainPanel, BorderLayout.CENTER);
 
-        //this.add(pathPanelScroller, BorderLayout.WEST);
+        containerPanel = new JPanel();
+        containerPanel.setLayout(new BorderLayout());
+        containerPanel.add(containerName = new JLabel("Container name", SwingConstants.CENTER), BorderLayout.NORTH);
+        containerName.setFont(new Font("Calibri", Font.PLAIN, 20));
+        mainPanel.add(containerPanel);
+
+        itemPanel = new JPanel();
+        itemPanel.setLayout(new BorderLayout());
+        itemPanel.add(itemName = new JLabel("Item name", SwingConstants.CENTER), BorderLayout.NORTH);
+        itemName.setFont(new Font("Calibri", Font.PLAIN, 20));
+        mainPanel.add(itemPanel);
+
+        itemList = new JList<>();
+        itemList.setModel(itemModel = new DefaultListModel<>());
+        itemModel.addElement(new Item("Yo-yo", 200, 1.20));
+        itemModel.addElement(new Item("Dice", 3, 0.25));
+        itemModel.addElement(new Item("Notebook", 1, 2.00));
+        itemModel.addElement(new Item("Pencil", 16, 0.00));
+        itemModel.addElement(new Item("Pencil sharpener", 1, 3.40));
+        containerPanel.add(new JScrollPane(itemList), BorderLayout.CENTER);
+
+        itemPanel.add(statsPanel = new JPanel(), BorderLayout.CENTER);
+        statsPanel.setLayout(new GridLayout(2,1));
+        statsPanel.add(valuePanel = new JPanel(new GridLayout(2, 2)));
+        statsPanel.add(notePanel = new JPanel(new BorderLayout()));
+
+        valuePanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        valuePanel.add(itemQuantity = new JLabel("Quantity:"));
+        valuePanel.add(quantitySpinner = new JSpinner());
+        valuePanel.add(itemPrice = new JLabel("Unit price:"));
+        valuePanel.add(priceSpinner = new JSpinner());
+
+        notePanel.add(itemNotes = new JTextArea("Enter notes here"));
+
+
+
+
+
+
+
+
 
 
         this.setVisible(true);
