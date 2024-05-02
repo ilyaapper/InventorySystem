@@ -13,7 +13,7 @@ public class ISView extends JFrame {
     ImageIcon icon;
     JMenuBar bar;
     JMenu fileMenu, itemMenu, viewMenu, helpMenu;
-    JMenuItem openMI, saveMI, saveAsMI, addMI, deleteMI, userManualMI, faqMI;
+    JMenuItem openMI, saveMI, saveAsMI, addMI, deleteMI, winLafMI, metalLafMI, darkLafMI, userManualMI, faqMI;
     JPanel pathPanel, searchPanel, treePanel, mainPanel, containerPanel, itemPanel, statsPanel, valuePanel, notePanel;
     JTextField searchBar;
     JScrollPane pathPanelScroller;
@@ -30,6 +30,7 @@ public class ISView extends JFrame {
         super("Inventory System");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(800, 500);
+        this.setMinimumSize(new Dimension(600, 450));
         this.setLayout(new BorderLayout());
         icon = new ImageIcon("ISIcon.png");
         this.setIconImage(icon.getImage());
@@ -48,8 +49,17 @@ public class ISView extends JFrame {
         itemMenu.add(addMI = new JMenuItem("Add"));
         itemMenu.add(deleteMI = new JMenuItem("Delete"));
 
+        viewMenu.add(metalLafMI = new JMenuItem("Metal"));
+        viewMenu.add(winLafMI = new JMenuItem("Windows"));
+        viewMenu.add(darkLafMI = new JMenuItem("Dark"));
+        winLafMI.addActionListener(listener);
+        metalLafMI.addActionListener(listener);
+        darkLafMI.addActionListener(listener);
+
         helpMenu.add(userManualMI = new JMenuItem("User manual"));
         helpMenu.add(faqMI = new JMenuItem("FAQ"));
+        userManualMI.addActionListener(listener);
+        faqMI.addActionListener(listener);
         this.setJMenuBar(bar);
 
         // Path panel
@@ -109,21 +119,36 @@ public class ISView extends JFrame {
 
         valuePanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         valuePanel.add(itemQuantity = new JLabel("Quantity:"));
+        itemQuantity.setFont(new Font("Calibri", Font.PLAIN, 16));
         valuePanel.add(quantitySpinner = new JSpinner());
-        valuePanel.add(itemPrice = new JLabel("Unit price:"));
+        quantitySpinner.setFont(new Font("Calibri", Font.PLAIN, 16));
+
+        valuePanel.add(itemPrice = new JLabel("Unit price($):"));
+        itemPrice.setFont(new Font("Calibri", Font.PLAIN, 16));
         valuePanel.add(priceSpinner = new JSpinner());
+        priceSpinner.setFont(new Font("Calibri", Font.PLAIN, 16));
 
         notePanel.add(itemNotes = new JTextArea("Enter notes here"));
 
 
 
-
-
-
-
-
-
-
         this.setVisible(true);
+    }
+
+    public void changeUI(String lafName) {
+        try {
+            if (lafName.equalsIgnoreCase("Windows")) {
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            }
+            else if (lafName.equalsIgnoreCase("Metal")) {
+                UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            }
+            else if (lafName.equalsIgnoreCase("Dark")) {
+                UIManager.setLookAndFeel("com.formdev.flatlaf.intellijthemes.FlatArcDarkIJTheme");
+            }
+            SwingUtilities.updateComponentTreeUI(this);
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize LAF");
+        }
     }
 }

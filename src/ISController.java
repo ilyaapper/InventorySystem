@@ -18,6 +18,14 @@ public class ISController implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        if (e.getSource()==view.winLafMI) {
+            view.changeUI(view.winLafMI.getText());
+        }
+        else if (e.getSource()==view.metalLafMI) {
+            view.changeUI(view.metalLafMI.getText());
+        }
+        else if (e.getSource()==view.darkLafMI) {
+            view.changeUI(view.darkLafMI.getText());
+        }
     }
 }
