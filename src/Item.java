@@ -1,60 +1,55 @@
 /* File Item.java
- * Author: Ilya Efremenko
+ * Author: Ilya Efremenko & Daniel Seamus Boots
  * Created on: 01 May 2024
  * Purpose: Standard class for each item
  * Notes:
  */
 
-public class Item {
-    private String name, notes;
-    private int quantity;
-    private double price;
+import java.util.ArrayList;
 
-    public Item(String name, int quantity, double price) {
-        this.name = name;
-        this.quantity = quantity;
-        this.price = Math.round(price * 100) / 100.0;
-        this.notes = "Add notes here";
+
+public class Item {
+    private String name;
+    private ArrayList<ItemField> fields;
+
+    public Item(String name) {
+        this.name = name;                   // Item name
+        this.fields = new ArrayList<>();    // Array of standard & custom fields
     }
 
+    // Adding custom field
+    public void addField(ItemField field) {
+        this.fields.add(field);
+    }
+
+    // Getting field's value
+    public Object getFieldValue(String fieldName) {
+        for (ItemField field : this.fields) {
+            if (field.getName().equalsIgnoreCase(fieldName)) {
+                return field.getValue();
+            }
+        }
+        return null;
+    }
+
+    // Getting name
     public String getName() {
         return name;
     }
 
-    public String getNotes() {
-        return notes;
+    // Setting name
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public int getQuantity() {
-        return quantity;
+    // Getting fields
+    public ArrayList<ItemField> getFields() {
+        return fields;
     }
 
-    public double getPrice() {
-        return price;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
+    // Printing
     @Override
     public String toString() {
-        if (quantity / 100 > 1) {
-            return quantity + "  " + name;
-        }
-        else if (quantity / 100 < 1 && quantity / 10 >= 1) {
-            return quantity + "    " + name;
-        }
-        else {
-            return quantity + "      " + name;
-        }
+        return this.getName();
     }
 }
