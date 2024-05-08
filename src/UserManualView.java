@@ -51,6 +51,11 @@ public class UserManualView extends JFrame {
         controlPanel.add(pageLabel = new JLabel(Integer.toString(page = 1)));
         controlPanel.add(nextButton = new JButton("Next"));
         pageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        previousButton.addActionListener(listener);
+        nextButton.addActionListener(listener);
+
+
         this.setVisible(true);
     }
 
