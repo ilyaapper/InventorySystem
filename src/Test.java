@@ -5,9 +5,15 @@
  * Notes:
  */
 
+import javax.swing.*;
+
 // For current test runs
-public class Test {
+public class Test implements Runnable {
     public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Test());
+    }
+    @Override
+    public void run() {
         new ISController();
     }
 }

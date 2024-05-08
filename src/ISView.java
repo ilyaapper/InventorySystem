@@ -26,7 +26,7 @@ public class ISView extends JFrame {
     private JTree tree;
     private JLabel containerName, itemName, itemQuantity, itemPrice;
     private JList<Item> itemList;
-    private DefaultListModel<Item> itemModel;
+    private DefaultListModel<Item> itemListModel;
     private JTextArea itemNotes;
     private JSpinner quantitySpinner, priceSpinner;
 
@@ -105,9 +105,9 @@ public class ISView extends JFrame {
         // Not sure?
         tree.getSelectionModel().addTreeSelectionListener(e -> {
             Inventory selInv = (Inventory) tree.getLastSelectedPathComponent();
-            itemModel.clear();
+            itemListModel.clear();
             for (Item item : selInv.getItems()) {
-                itemModel.addElement(item);
+                itemListModel.addElement(item);
             }
         });
 
@@ -123,7 +123,7 @@ public class ISView extends JFrame {
         containerName.setFont(new Font("Calibri", Font.PLAIN, 20));
         mainPanel.add(containerPanel);
         itemList = new JList<>();
-        itemList.setModel(itemModel = new DefaultListModel<>());
+        itemList.setModel(itemListModel = new DefaultListModel<>());
         itemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         itemList.addListSelectionListener(listList);
         containerPanel.add(new JScrollPane(itemList), BorderLayout.CENTER);
