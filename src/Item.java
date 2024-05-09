@@ -26,6 +26,7 @@ public class Item {
     public Object getFieldValue(String fieldName) {
         for (ItemField field : this.fields) {
             if (field.getName().equalsIgnoreCase(fieldName)) {
+                System.out.println(field.getValue());
                 return field.getValue();
             }
         }
@@ -40,6 +41,20 @@ public class Item {
     // Setting name
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setField(String fieldName, Object value) {
+        // set the field's new value by iterating through the arraylist
+        for (int i = 0; i < this.fields.size(); i++) {
+            ItemField field = this.fields.get(i);
+            if (field.getName().equalsIgnoreCase(fieldName)) {
+                this.fields.remove(i);
+                // update the value
+                field.setValue(value);
+                this.fields.add(i, field);
+                break;
+            }
+        }
     }
 
     // Getting fields

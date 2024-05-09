@@ -6,26 +6,30 @@
  */
 
 import javax.swing.*;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class SaveFileManager {
 
+    final private String HEADER = "type,level,name,value";
+
     final private String INV = "INV";
     final private String ITEM = "ITEM";
     final private String FIELD = "FIELD";
 
+    private ISController mainController;
+
     private JFileChooser fileChooser;
     private Scanner scanner;
 
-    public SaveFileManager() {
+    public SaveFileManager(ISController mainController) {
+        this.mainController = mainController;
         this.fileChooser = new JFileChooser();
     }
 
-    public void openSaveFile(ISController mainController) {
-        /* returns true if the user selects a file, and
+    public void openSaveFile() {
+        /* successfully opens a save file if the user selects a file, and
          *   the file is a valid CSV,
          *   contains the standard header,
          *   and each line is a valid entry.
@@ -34,6 +38,11 @@ public class SaveFileManager {
         this.fileChooser.showOpenDialog(null);
 
         File saveFile = this.fileChooser.getSelectedFile();
+
+        // the user pressed 'cancel'
+        if (saveFile == null) {
+            return;
+        }
 
         try {
 
@@ -44,7 +53,7 @@ public class SaveFileManager {
 
                 String header = scanner.nextLine();
 
-                if (header.equals("type,level,name,value")) {
+                if (header.equals(HEADER)) {
 
                     // temp pointers from last iteration
                     int lastLevel = -1;
@@ -57,53 +66,15 @@ public class SaveFileManager {
                         String[] contents = scanner.nextLine().split(",", 5);
 
                         String type = contents[0];
-                        String levelS = contents[1];
-                        int level = lastLevel;
-                        try {
-                            if (!levelS.isEmpty()) {
-                                level = Integer.parseInt(contents[1]);
-                            }
-                        } catch (NumberFormatException e) {
-                            return;
-                        }
+                        String levelStr = contents[1]; // will be parsed properly
                         String name = contents[2];
-                        String valueStr = contents[3]; // will be parsed
+                        String valueStr = contents[3]; // will be parsed properly
 
-                        // Either a float, integer, bool, or string.
-                        ItemFieldType valueType = null;
-                        Object value = null;
-
-                        // value is only used when parsing fields
-
-                        if (type.equals(FIELD)) {
-                            // decimal (float) type
+                        int level = lastLevel;
+                        if (!levelStr.isEmpty()) { // different level than before
                             try {
-                                value = Float.parseFloat(valueStr);
-                                valueType = ItemFieldType.DEC;
-                            } catch (NumberFormatException ignored) {}
-
-                            // integer type
-                            try {
-                                value = Integer.parseInt(valueStr);
-                                valueType = ItemFieldType.INT;
-                            } catch (NumberFormatException ignored) {}
-
-                            // boolean type
-                            switch (valueStr) {
-                                case "true" -> {
-                                    value = true;
-                                    valueType = ItemFieldType.BOOL;
-                                }
-                                case "false" -> {
-                                    value = false;
-                                    valueType = ItemFieldType.BOOL;
-                                }
-                                // string type
-                                default -> {
-                                    value = valueStr;
-                                    valueType = ItemFieldType.STRING;
-                                }
-                            }
+                                level = Integer.parseInt(contents[1]);
+                            } catch (NumberFormatException e) { return; }
                         }
 
                         // parse the actual entries line-by-line
@@ -144,7 +115,10 @@ public class SaveFileManager {
                                 lastItm = new Item(name);
                                 invList.get(lastLevel).addItem(lastItm);
                             }
-                            case FIELD -> lastItm.addField(new ItemField(name, valueType, value));
+                            case FIELD -> {
+                                ItemField itemField = parseItemField(name, valueStr);
+                                lastItm.addField(itemField);
+                            }
                         }
 
                     }
@@ -156,13 +130,100 @@ public class SaveFileManager {
         } catch (FileNotFoundException |
                  NullPointerException |
                  IndexOutOfBoundsException e) {
-            System.out.println(e.toString());
+            return;
         }
 
     }
 
-    private ItemField parseItemField(String[] contents) {
-        return null;
+    private ItemField parseItemField(String name, String valueStr) {
+        Object value = null;
+        ItemFieldType valueType = null;
+        boolean valueIsANum = false;
+
+        // decimal (float) type
+        try {
+            value = Float.parseFloat(valueStr);
+            valueType = ItemFieldType.DEC;
+            valueIsANum = true;
+        } catch (NumberFormatException ignored) {}
+
+        // integer type
+        try {
+            value = Integer.parseInt(valueStr);
+            valueType = ItemFieldType.INT;
+            valueIsANum = true;
+        } catch (NumberFormatException ignored) {}
+
+        if (!valueIsANum) {
+            // boolean type
+            switch (valueStr) {
+                case "true" -> {
+                    value = true;
+                    valueType = ItemFieldType.BOOL;
+                }
+                case "false" -> {
+                    value = false;
+                    valueType = ItemFieldType.BOOL;
+                }
+                // string type
+                default -> {
+                    value = valueStr;
+                    valueType = ItemFieldType.STRING;
+                }
+            }
+        }
+        return new ItemField(name, valueType, value);
+    }
+
+    public void saveSaveFile() {
+        this.fileChooser.showSaveDialog(null);
+
+        File saveFile = this.fileChooser.getSelectedFile();
+
+        // the user pressed 'cancel', and so no file was chosen
+        if (saveFile == null) {
+            return;
+        }
+
+        // the output for the file writing
+        PrintStream fileOut;
+        try{
+            fileOut = new PrintStream(saveFile);
+        } catch (FileNotFoundException e) { return; }
+
+        // print header
+        fileOut.println(HEADER);
+
+        // Start printing out the root inventories, and
+        // recurse inside in order to write all the inventories
+        writeInventories(fileOut, mainController.getInvList(), 0);
+    }
+
+    private void writeInventories(PrintStream fileOut,
+                                  ArrayList<Inventory> invs,
+                                  int level) {
+
+        // write each inventory
+        for (Inventory inv : invs) {
+            // print the inventory entry
+            fileOut.printf("%s,%d,%s,%n", INV, level, inv.getName());
+
+            // print the item entries
+            for (Item item : inv.getItems()) {
+                fileOut.printf("%s,,%s,%n", ITEM, item.getName());
+
+                // print the item field entries
+                for (ItemField field : item.getFields()) {
+                    fileOut.printf("%s,,%s,%s%n", FIELD, field.getName(), field.getValue());
+                }
+
+            }
+
+            // print sub-inventory entries, if applicable
+            writeInventories(fileOut, inv.getInventories(), level+1);
+
+        }
+
     }
 
 }

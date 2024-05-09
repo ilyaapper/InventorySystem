@@ -28,19 +28,13 @@ public class Inventory extends DefaultMutableTreeNode  {
         this.items.add(item);
     }
 
+    public void delItem(Item item) {
+        this.items.remove(item);
+    }
+
     // Adding sub container to container
     public void addInv(Inventory inv) {
         this.inventories.add(inv);
-    }
-
-    // Getting container name
-    public String getName() {
-        return name;
-    }
-
-    // Setting container name
-    public void setName(String name) {
-        this.name = name;
     }
 
     // Getting sub containers
@@ -53,9 +47,13 @@ public class Inventory extends DefaultMutableTreeNode  {
         return items;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
     // Printing
     @Override
     public String toString() {
-        return this.name+"A";
+        return this.name;
     }
 }

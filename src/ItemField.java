@@ -11,15 +11,6 @@ public class ItemField {
     private ItemFieldType type; // Field type
     private Object value; // Arbitrary variable
 
-    public ItemField(String name, ItemFieldType type) {
-        this(name, type, switch (type) {
-            case INT -> 0;
-            case DEC -> 0.0f;
-            case BOOL -> false;
-            case STRING -> "";
-        });
-    }
-
     public ItemField(String name, ItemFieldType type, Object value) {
         this.name = name;
         this.type = type;
