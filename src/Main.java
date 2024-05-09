@@ -7,10 +7,9 @@
 
 import javax.swing.*;
 
-// For current test runs
-public class Test implements Runnable {
+public class Main implements Runnable {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Test());
+        SwingUtilities.invokeLater(new Main());
     }
     @Override
     public void run() {

@@ -48,8 +48,8 @@ public class ISController implements ActionListener, ListSelectionListener {
         else if (e.getSource()==view.getDarkLafMI()) {
             view.changeUI(view.getDarkLafMI().getText()); // Changing to Dark UI
         }
-        else if (e.getSource()==view.getUserManualMI()) {
-            view.openManual(this);                  // Opening user manual
+        else if (e.getSource() == view.getUserManualMI()) {
+            new UserManualController();                  // Opening user manual
         }
         else if (e.getSource()==view.getAddMI()) {
             new ItemAddView(this);                  // Opening item add dialogue

@@ -236,10 +236,6 @@ public class ISView extends JFrame {
         return userManualMI;
     }
 
-    public JMenuItem getFaqMI() {
-        return faqMI;
-    }
-
     public JPanel getPathPanel() {
         return pathPanel;
     }
@@ -312,10 +308,6 @@ public class ISView extends JFrame {
         return itemList;
     }
 
-    public DefaultListModel<Item> getItemModel() {
-        return itemModel;
-    }
-
     public JTextArea getItemNotes() {
         return itemNotes;
     }
@@ -330,10 +322,5 @@ public class ISView extends JFrame {
 
     public DefaultMutableTreeNode getTreeRoot() {
         return treeRoot;
-    }
-
-    // Open user manual window
-    public void openManual(ActionListener listener) {
-        new UserManualView(listener);
     }
 }
